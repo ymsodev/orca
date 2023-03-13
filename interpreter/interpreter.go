@@ -1,9 +1,8 @@
 package interpreter
 
 func Interpret(code string) {
-	tokens, err := newLexer(code).tokenize()
-	if err != nil {
+	lexer := newLexer(code)
+	lexer.tokenize()
 
-	}
 	parser := newParser(tokens)
 }

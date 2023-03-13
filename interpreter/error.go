@@ -1,17 +1,18 @@
 package interpreter
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"strconv"
 	"strings"
 )
 
-type Error struct {
-	Msg   string // error message
-	Line  int    // line number in the code
-	Start int    // highlight start
-	End   int    // highlight end
+type errorInfo struct {
+	error
+	lineNum int
+	start   int
+	end     int
 }
 
 type ErrorPrinter struct {

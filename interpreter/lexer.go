@@ -12,8 +12,7 @@ type lexer struct {
 	lineNum int
 	start   int
 	current int
-	tokens  []*Token
-	err     *Error
+	tokens  []*token
 }
 
 func newLexer(code string) *lexer {
@@ -23,18 +22,26 @@ func newLexer(code string) *lexer {
 		lineNum: 0,
 		start:   0,
 		current: 0,
-		tokens:  make([]*Token, 0),
+		tokens:  make([]*token, 0),
 	}
 }
 
-func (l *lexer) tokenize() {
-	for !l.eof() && l.err != nil {
-		l.next()
+func (l *lexer) tokenize() ([]*token, *errorInfo) {
+	for !l.eof() {
+		if err := l.next(); err != nil {
+			return l.tokens, &errorInfo{
+				error:   err,
+				lineNum: l.lineNum,
+				start:   l.start,
+				end:     l.current,
+			}
+		}
 	}
-	l.token(TokEof, nil)
+	l.token(tokEof, nil)
+	return l.tokens, nil
 }
 
-func (l *lexer) next() {
+func (l *lexer) next() error {
 	defer func() { l.start = l.current }()
 	switch r := l.advance(); r {
 	case '(':
@@ -54,11 +61,11 @@ func (l *lexer) next() {
 		l.lineNum++
 	default:
 		if unicode.IsDigit(r) {
-			l.number()
+			return l.number()
 		} else if unicode.IsLetter(r) {
-			l.identifier()
+			return l.identifier()
 		} else {
-			l.error(fmt.Sprintf("invalid character: `%s`", string(r)))
+			return fmt.Sprintf("invalid character: `%s`", string(r))
 		}
 	}
 }

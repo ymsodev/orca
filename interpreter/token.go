@@ -2,53 +2,53 @@ package interpreter
 
 import "fmt"
 
-type TokenType byte
+type tokenType byte
 
 const (
-	TokLeftParen TokenType = iota
-	TokRightParen
-	TokPlus
-	TokMinus
-	TokStar
-	TokSlash
-	TokNumber
-	TokIdentifier
-	TokEof
+	tokLeftParen tokenType = iota
+	tokRightParen
+	tokPlus
+	tokMinus
+	tokStar
+	tokSlash
+	tokNumber
+	tokIdentifier
+	tokEof
 )
 
-func (t TokenType) String() string {
+func (t tokenType) String() string {
 	switch t {
-	case TokLeftParen:
+	case tokLeftParen:
 		return "LeftParen"
-	case TokRightParen:
+	case tokRightParen:
 		return "RightParen"
-	case TokPlus:
+	case tokPlus:
 		return "Plus"
-	case TokMinus:
+	case tokMinus:
 		return "Minus"
-	case TokStar:
+	case tokStar:
 		return "Star"
-	case TokSlash:
+	case tokSlash:
 		return "Slash"
-	case TokNumber:
+	case tokNumber:
 		return "Number"
-	case TokIdentifier:
+	case tokIdentifier:
 		return "Identifier"
-	case TokEof:
+	case tokEof:
 		return "EOF"
 	default:
 		return "undefined"
 	}
 }
 
-type Token struct {
-	Type    TokenType
-	Lexeme  string
-	Line    int
-	Col     int
-	Literal any
+type token struct {
+	tokType tokenType
+	lexeme  string
+	line    int
+	col     int
+	literal any
 }
 
-func (t *Token) String() string {
-	return fmt.Sprintf("<%s [%d:%d]: `%s`>", t.Type, t.Line, t.Col, t.Lexeme)
+func (t *token) String() string {
+	return fmt.Sprintf("<%s [%d:%d]: `%s`>", t.tokType, t.line, t.col, t.lexeme)
 }
