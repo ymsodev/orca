@@ -14,7 +14,7 @@ type Error struct {
 	End   int    // highlight end
 }
 
-type ErrorHandler struct {
+type ErrorPrinter struct {
 	lines []string
 }
 

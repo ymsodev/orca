@@ -27,17 +27,14 @@ func newLexer(code string) *lexer {
 	}
 }
 
-func (l *lexer) lex() ([]*Token, error) {
-	for !l.eof() {
-		if err := l.next(); err != nil {
-			return nil, err
-		}
+func (l *lexer) tokenize() {
+	for !l.eof() && l.err != nil {
+		l.next()
 	}
 	l.token(TokEof, nil)
-	return l.tokens, nil
 }
 
-func (l *lexer) next() error {
+func (l *lexer) next() {
 	defer func() { l.start = l.current }()
 	switch r := l.advance(); r {
 	case '(':
@@ -61,10 +58,9 @@ func (l *lexer) next() error {
 		} else if unicode.IsLetter(r) {
 			l.identifier()
 		} else {
-			l.error(fmt.Sprintf("invalid character: %s", string(r)))
+			l.error(fmt.Sprintf("invalid character: `%s`", string(r)))
 		}
 	}
-	return nil
 }
 
 func (l *lexer) eof() bool {
@@ -97,23 +93,20 @@ func (l *lexer) token(tokType TokenType, literal any) {
 	})
 }
 
-func (l *lexer) number() {
+func (l *lexer) number() error {
 	for !l.eof() && unicode.IsDigit(l.peek()) {
 		l.current++
 	}
-
 	if l.peek() == '.' {
-		l.float()
-		return
+		return l.float()
 	}
-
 	lexeme := l.text()
 	num, err := strconv.Atoi(lexeme)
 	if err != nil {
-		l.error(fmt.Sprintf("invalid number: %s", lexeme))
-		return
+		return fmt.Errorf("invalid number: %s", lexeme)
 	}
 	l.token(TokNumber, num)
+	return nil
 }
 
 func (l *lexer) float() error {

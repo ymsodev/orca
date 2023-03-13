@@ -1,8 +1,12 @@
 package interpreter
 
-type Parser struct {
+type parser struct {
 }
 
-func (p *Parser) Parse() {
+func newParser(tokens []*Token) *parser {
+	return &parser{}
+}
+
+func (p *parser) parse() {
 
 }
